@@ -945,3 +945,5 @@ class Cgroup(object):
 class CgroupError(Exception):
     def __init__(self, message):
         super(CgroupError, self).__init__(message)
+
+# vim: set et ts=4 sw=4:
