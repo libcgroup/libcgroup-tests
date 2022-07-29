@@ -6,6 +6,8 @@
 # Author: Tom Hromatka <tom.hromatka@oracle.com>
 #
 
+TEST_INSTALL_DIR=$(DESTDIR)/$(libdir)/libcgroup/tests
+
 AM_CPPFLAGS = -I$(top_srcdir)/include \
 	      -I$(top_srcdir)/src \
 	      -I$(top_srcdir)/src/tools \
@@ -43,8 +45,16 @@ gtest_SOURCES = gtest.cpp \
 		014-cgroupv2_get_subtree_control.cpp \
 		015-cgroupv2_controller_enabled.cpp \
 		016-cgset_parse_r_flag.cpp
-gtest_LDFLAGS = -L$(top_srcdir)/googletest/googletest -l:libgtest.so \
+gtest_LDFLAGS = -L$(top_srcdir)/googletest/googletest -l:libgtest.so	\
+		-rpath $(TEST_INSTALL_DIR) \
 		-rpath $(abs_top_srcdir)/googletest/googletest
+
+installcheck-local:
+	$(MAKE) $(AM_MAKEFLAGS) gtest
+	test -d $(TEST_INSTALL_DIR) || mkdir -p $(TEST_INSTALL_DIR)
+	cp -rf ./.libs/gtest $(TEST_INSTALL_DIR)
+	cp -rf $(top_srcdir)/googletest/googletest/libgtest.so $(TEST_INSTALL_DIR)
+	$(TEST_INSTALL_DIR)/gtest
 
 clean-local:
 	${RM} test-procpidcgroup
